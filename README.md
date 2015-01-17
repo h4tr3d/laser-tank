@@ -1,5 +1,5 @@
 # laser-tank
-Port of the Laser Tank game to Linux initially written for ColibriOS: http://habrahabr.ru/post/248001
+Port of the Laser Tank game to Linux initially written for KolibriOS: http://habrahabr.ru/post/248001
 
 # Build
 
