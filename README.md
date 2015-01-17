@@ -24,7 +24,7 @@ make -j8
 
 Copy resources near executable (or make links):
 ```
-cp ../data.lvl ../data01.pak ../data01.pak ../DejaVuSans.ttf .
+cp ../data.lvl ../data01.pak ../data02.pak ../DejaVuSans.ttf .
 ```
 
 Run game:
