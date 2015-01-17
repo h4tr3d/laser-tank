@@ -352,7 +352,7 @@ void initGraph()
     }
 
     std::string fontFile {kosExePath};
-    fontFile = fontFile.substr(0, fontFile.rfind('/')) + "/Arial.ttf";
+    fontFile = fontFile.substr(0, fontFile.rfind('/')) + "/DejaVuSans.ttf";
 
     std::clog << "Path: '" << fontFile << "'" << std::endl;
 
