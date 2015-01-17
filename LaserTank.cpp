@@ -628,8 +628,8 @@ void Laser(Point pos, Point vec, RGB color)
 		case FIELD_GUN_1:
 		case FIELD_GUN_2:
 		case FIELD_GUN_3:
-			if (code == FIELD_GUN_0 && vector == Point(-1, 0) || code == FIELD_GUN_1 && vector == Point(0, -1)
-				|| code == FIELD_GUN_2 && vector == Point(1, 0) || code == FIELD_GUN_3 && vector == Point(0, 1))
+            if (((code == FIELD_GUN_0) && (vector == Point(-1, 0))) || ((code == FIELD_GUN_1) && (vector == Point(0, -1)))
+                || ((code == FIELD_GUN_2) && (vector == Point(1, 0))) || ((code == FIELD_GUN_3) && (vector == Point(0, 1))))
 			{
 				for (int i = 2; i < 23; ++i)
 					kos_Pause(1);
@@ -938,10 +938,10 @@ void player_move(Point vector, float angle)
 			case FIELD_WATER:
 			case FIELD_BOX_WATER:
 			case FIELD_BRICK_DES:
-				if (code == FIELD_BOX_MISSLE_0 && (vector == Point(1, 0) || vector == Point(0, 1))
-					|| code == FIELD_BOX_MISSLE_1 && (vector == Point(-1, 0) || vector == Point(0, 1))
-					|| code == FIELD_BOX_MISSLE_2 && (vector == Point(-1, 0) || vector == Point(0, -1))
-					|| code == FIELD_BOX_MISSLE_3 && (vector == Point(1, 0) || vector == Point(0, -1))
+                if ((code == FIELD_BOX_MISSLE_0 && ((vector == Point(1, 0) || vector == Point(0, 1))))
+                    || (code == FIELD_BOX_MISSLE_1 && ((vector == Point(-1, 0) || vector == Point(0, 1))))
+                    || (code == FIELD_BOX_MISSLE_2 && ((vector == Point(-1, 0) || vector == Point(0, -1))))
+                    || (code == FIELD_BOX_MISSLE_3 && ((vector == Point(1, 0) || vector == Point(0, -1))))
 					)
 					animation(vector, angle, code);
 				return;
@@ -996,7 +996,7 @@ void player_move(Point vector, float angle)
 		else
 		{
 			cnt = 24;
-			if (player.angle == 270 && angle == 0 || player.angle == 0 && angle == 270)
+            if ((player.angle == 270 && angle == 0) || (player.angle == 0 && angle == 270))
 				addAngle = (player.angle == 0) ? -3.5f : 3.5f;
 			else
 				addAngle = (angle < player.angle) ? -3.5f : 3.5f;
@@ -1172,6 +1172,7 @@ void key_press(int key)
 
 void MousePress(int button, Point position)
 {
+    static_cast<void>(button);
 	//rtlDebugOutString("Mouse");
 	//rtlDebugOutString(ftoa(position.X));
 	//rtlDebugOutString(ftoa(position.Y));
@@ -1661,7 +1662,7 @@ void event_loop()
     }
 }
 
-int main(int argc, char **argv)
+int main()
 {
     auto result = readlink("/proc/self/exe", kosExePath, 1024);
     if (result < 0) {

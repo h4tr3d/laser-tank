@@ -75,7 +75,10 @@ void kos_DefineAndDrawWindow(
     const char *title
 	)
 {
-    // TODO: SDL2 CreateWindow
+    static_cast<void>(mainAreaType);
+    static_cast<void>(headerType);
+    static_cast<void>(headerColour);
+
     if (s_win == nullptr) {
         s_win = SDL_CreateWindow(title, x, y, sizeX, sizeY, SDL_WINDOW_SHOWN);
         if (s_win == nullptr) {
@@ -112,6 +115,7 @@ void kos_PutPixel( Dword x, Dword y, Dword colour )
 // ������� 2 �������� ��� ������� �������
 bool kos_GetKey( Byte &keyCode )
 {
+    static_cast<void>(keyCode);
     assert(0);
     return false;
 }
@@ -133,10 +137,13 @@ void kos_WriteTextToWindow(
 	Dword textLen
 	)
 {
+    static_cast<void>(fontType);
+    static_cast<void>(textLen);
+
     std::clog << textPtr << std::endl;
 
     RGBA         color0(textColour);
-    SDL_Color    color{};
+    SDL_Color    color = SDL_Color();
 
     color.a = color0.a;
     color.b = color0.b;
@@ -203,6 +210,12 @@ void kos_PutImage(const RGB * imagePtr, Word sizeX, Word sizeY, Word x, Word y )
 // ������� 8 ���������� ������
 void kos_DefineButton( Word x, Word y, Word sizeX, Word sizeY, Dword buttonID, Dword colour )
 {
+    static_cast<void>(x);
+    static_cast<void>(y);
+    static_cast<void>(sizeX);
+    static_cast<void>(sizeY);
+    static_cast<void>(buttonID);
+    static_cast<void>(colour);
     assert(0);
 }
 
@@ -210,6 +223,8 @@ void kos_DefineButton( Word x, Word y, Word sizeX, Word sizeY, Dword buttonID, D
 // ������� 9 - ���������� � ��������
 Dword kos_ProcessInfo( sProcessInfo *targetPtr, Dword processID )
 {
+    static_cast<void>(targetPtr);
+    static_cast<void>(processID);
     assert(0);
 }
 
@@ -234,7 +249,6 @@ Dword kos_CheckForEvent()
 // ������� 12
 void kos_WindowRedrawStatus( Dword status )
 {
-    //assert(0);
     if (status == 2) {
         SDL_RenderPresent(s_ren);
     }
@@ -244,6 +258,11 @@ void kos_WindowRedrawStatus( Dword status )
 // ������� 13 ���������� ������
 void kos_DrawBar( Word x, Word y, Word sizeX, Word sizeY, Dword colour )
 {
+    static_cast<void>(x);
+    static_cast<void>(y);
+    static_cast<void>(sizeX);
+    static_cast<void>(sizeY);
+    static_cast<void>(colour);
     assert(0);
 }
 
@@ -251,6 +270,7 @@ void kos_DrawBar( Word x, Word y, Word sizeX, Word sizeY, Dword colour )
 // ������� 17
 bool kos_GetButtonID( Dword &buttonID )
 {
+    static_cast<void>(buttonID);
     assert(0);
 }
 
@@ -258,6 +278,7 @@ bool kos_GetButtonID( Dword &buttonID )
 // ������� 23
 Dword kos_WaitForEventTimeout( Dword timeOut )
 {
+    static_cast<void>(timeOut);
     assert(0);
 }
 
@@ -265,6 +286,9 @@ Dword kos_WaitForEventTimeout( Dword timeOut )
 // ��������� ���������� � ��������� "����" ������� 37
 void kos_GetMouseState( Dword & buttons, int & cursorX, int & cursorY )
 {
+    static_cast<void>(buttons);
+    static_cast<void>(cursorX);
+    static_cast<void>(cursorY);
     assert(0);
 }
 
@@ -272,6 +296,7 @@ void kos_GetMouseState( Dword & buttons, int & cursorX, int & cursorY )
 // ������� 40 ���������� ����� �������
 void kos_SetMaskForEvents( Dword mask )
 {
+    static_cast<void>(mask);
     assert(0);
 }
 
@@ -287,6 +312,13 @@ void kos_DisplayNumberToWindow(
    bool valueIsPointer
    )
 {
+    static_cast<void>(value);
+    static_cast<void>(digitsNum);
+    static_cast<void>(x);
+    static_cast<void>(y);
+    static_cast<void>(colour);
+    static_cast<void>(nBase);
+    static_cast<void>(valueIsPointer);
     assert(0);
 }
 
@@ -294,6 +326,7 @@ void kos_DisplayNumberToWindow(
 // ������� 70 ������ � �������� �������
 Dword kos_FileSystemAccess( kosFileInfo *fileInfo )
 {
+    static_cast<void>(fileInfo);
     assert(0);
 }
 
@@ -308,6 +341,7 @@ void kos_DebugOutChar( char ccc )
 // ������� 66 ����� ��������� ������ �� ����������
 void kos_SetKeyboardDataMode( Dword mode )
 {
+    static_cast<void>(mode);
     assert(0);
 }
 
@@ -322,6 +356,7 @@ void rtlDebugOutString( const char *str )
 // ������� 64 ��������� ���������� ������, ���������� ��� ���������
 bool kos_ApplicationMemoryResize( Dword targetSize )
 {
+    static_cast<void>(targetSize);
     // sbrk???
     assert(0);
 }
@@ -330,6 +365,10 @@ bool kos_ApplicationMemoryResize( Dword targetSize )
 // ������� 67 �������� ��������� ����, �������� == -1 �� ��������
 void kos_ChangeWindow( Dword x, Dword y, Dword sizeX, Dword sizeY )
 {
+    static_cast<void>(x);
+    static_cast<void>(y);
+    static_cast<void>(sizeX);
+    static_cast<void>(sizeY);
     assert(0);
 }
 

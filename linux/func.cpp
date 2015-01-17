@@ -11,6 +11,12 @@ int SysColor = 0;
 // почему-то не было в стандартной библиотеке
 void kos_DrawLine( Word x1, Word y1, Word x2, Word y2, Dword colour, Dword invert )
 {
+    static_cast<void>(x1);
+    static_cast<void>(y1);
+    static_cast<void>(x2);
+    static_cast<void>(y2);
+    static_cast<void>(colour);
+    static_cast<void>(invert);
     // TODO: SDL2 DrawLine
     assert(0);
 }
@@ -46,6 +52,8 @@ double textwidth( char *s, int len)
 
 double textheight( char *s, int len)
 {
+    static_cast<void>(s);
+    static_cast<void>(len);
 	return 8.0;
 }
 

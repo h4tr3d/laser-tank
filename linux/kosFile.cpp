@@ -1,6 +1,7 @@
 #include <exception>
 #include <stdexcept>
 #include <string>
+#include <cassert>
 
 #include <string.h>
 
@@ -35,6 +36,9 @@ int	CKosFile::Read(Byte *targetPtr, int readCount)
 
 int CKosFile::Write(Byte *sourcePtr, int writeCount)
 {
+    static_cast<void>(sourcePtr);
+    static_cast<void>(writeCount);
+    assert(0);
 	return 0;
 }
 
