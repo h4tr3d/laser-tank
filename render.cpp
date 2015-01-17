@@ -1,4 +1,8 @@
+#ifndef __linux__
 #include "smalllibc/kosSyst.h"
+#else
+#include "linux/kosSyst.h"
+#endif
 #include "render.h"
 
 CKosRender::CKosRender(int width, int height)
@@ -12,7 +16,7 @@ CKosRender::CKosRender(int width, int height)
 
 CKosRender::~CKosRender(void)
 {
-	//delete this->buffer;
+    delete[] buffer;
 }
 
 void CKosRender::Draw(Point position)

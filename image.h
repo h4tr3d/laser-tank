@@ -1,4 +1,8 @@
+#ifndef __linux__
 #include "smalllibc/kosSyst.h"
+#else
+#include "linux/kosSyst.h"
+#endif
 
 #define DRAW_NONE			0
 #define DRAW_ALPHA			1
@@ -15,7 +19,7 @@ private:
 	int frameWidth;
 	int frameHeight;
 public:
-	CKosImage(CKosRender *render, RGBA *buffer, int width, int height);
+    CKosImage(class CKosRender *render, RGBA *buffer, int width, int height);
 	~CKosImage(void);
 
 	void Draw(Point position, float angle, RGB color);

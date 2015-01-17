@@ -1,7 +1,21 @@
+#ifndef __linux__
 #include "smalllibc/kosSyst.h"
 #include "smalllibc/kosFile.h"
 #include "smalllibc/sprintf.h"
 #include "smalllibc/func.h"
+#else
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+#include <iostream>
+
+#include <SDL.h>
+
+#include "linux/kosSyst.h"
+#include "linux/kosFile.h"
+#include "linux/func.h"
+#endif
 #include "render.h"
 #include "image.h"
 
@@ -43,7 +57,7 @@
 #define FIELD_BRICK_DES		24
 #define FIELD_CRATER		25
 
-char* header = "Laser Tank";
+const char* header = "Laser Tank";
 
 struct Level
 {
@@ -53,9 +67,12 @@ struct Level
 void pause(int time)
 {
 	kos_Pause(time);
+#ifndef __linux__
+    // TODO: why this code present here???
 	Byte keyCode;
 	for (int i = 0; i < 10; ++i)
 		kos_GetKey(keyCode);
+#endif
 }
 
 Level *levels;
@@ -129,7 +146,9 @@ CKosImage* objbutton_arrow;
 int gameMode = MODE_MENU;
 int gameStatus = GAME_NONE;
 
-void draw_window(); 
+// Forward decl
+void event_loop();
+void draw_window();
 void openLevel(int index);
 void Laser(Point pos, Point vec, RGB color);
 
@@ -141,9 +160,9 @@ bool CollRecrVsPoint(Point point, Rect rect)
 struct Button
 {
 	Rect rect;
-	char* caption;
+    const char* caption;
 	Button() {}
-	Button(char* caption, Rect rect)
+    Button(const char* caption, Rect rect)
 	{
 		this->caption = caption;
 		this->rect = rect;
@@ -390,6 +409,10 @@ void DrawElevent(Point position, bool din)
 
 void MoveElement(Point a, Point b, int element)
 {
+#ifdef __linux__
+    kos_WindowRedrawStatus(1);
+#endif
+
 	level[a.Y][a.X].d = FIELD_NONE;
 	DrawElevent(a, false);
 	if (level[b.Y][b.X].s == FIELD_WATER)
@@ -400,6 +423,11 @@ void MoveElement(Point a, Point b, int element)
 	else
 		level[b.Y][b.X].d = element;
 	DrawElevent(b, true);
+
+#ifdef __linux__
+    kos_WindowRedrawStatus(2);
+#endif
+
 }
 
 void animation(Point vector, float angle, int obj)
@@ -459,6 +487,10 @@ void animation(Point vector, float angle, int obj)
 	if (level[player.position.Y + vector.Y][player.position.X + vector.X].d == obj)
 		MoveElement(player.position + vector, player.position + vector * 2, GetField(player.position + vector, true));
 
+#ifdef __linux__
+    kos_WindowRedrawStatus(1);
+#endif
+
 	DrawElevent(player.position, true);
 	DrawElevent(player.position + vector, true);
 	player.position = player.position + vector;
@@ -467,10 +499,19 @@ void animation(Point vector, float angle, int obj)
 	objPlayer->Draw(Point(0, 0), angle);
 	renderPlayer->Draw(player.position * 24);
 	ExistGun(player.position);
+
+#ifdef __linux__
+    kos_WindowRedrawStatus(2);
+#endif
+
 }
 
 void DrawLaser(Point position, int frame, RGB color)
-{
+{   
+#ifdef __linux__
+    kos_WindowRedrawStatus(1);
+#endif
+
 	renderBox->RenderImg(GetImg(position, false), Point(0, 0), 24, 24);
 	Byte code = GetField(position, true);
 	if (code == FIELD_BOX_MISSLE_0 || code == FIELD_BOX_MISSLE_1 || code == FIELD_BOX_MISSLE_2 || code == FIELD_BOX_MISSLE_3)
@@ -491,6 +532,10 @@ void DrawLaser(Point position, int frame, RGB color)
 	}
 	renderBox->Draw(position * 24);
 	level[position.Y][position.X].l = 1;
+
+#ifdef __linux__
+    kos_WindowRedrawStatus(2);
+#endif
 }
 
 bool LaserMoveElement(Point position, Point vector, int code, RGB color)
@@ -506,6 +551,10 @@ bool LaserMoveElement(Point position, Point vector, int code, RGB color)
 		case FIELD_BOX_WATER:
 			for (int i = 2; i < 23; ++i)
 			{
+#ifdef __linux__
+                kos_WindowRedrawStatus(1);
+#endif
+
 				renderBox->RenderImg(GetImg(position, false), Point(0, 0), 24, 24);
 				if (vector.X != 0)
 					objLaser->Draw((vector.X > 0) ? Point(i - 24, 0) : Point(24 - i, 0), 0, color);
@@ -548,6 +597,10 @@ bool LaserMoveElement(Point position, Point vector, int code, RGB color)
 					objBox->Draw(Point(0, 0), 0);
 				}
 				renderBox->Draw((position)* 24 + vector * i);
+
+#ifdef __linux__
+                kos_WindowRedrawStatus(2);
+#endif
 				kos_Pause(1);
 			}
 			MoveElement(position, position + vector, code);
@@ -584,14 +637,28 @@ void Laser(Point pos, Point vec, RGB color)
 					for (int x = 0; x < 16; x++)
 						if (level[y][x].l == 1)
 						{
+#ifdef __linux__
+                            kos_WindowRedrawStatus(1);
+#endif
 							DrawElevent(Point(x, y), true);
 							level[y][x].l = 0;
+#ifdef __linux__
+                            kos_WindowRedrawStatus(2);
+#endif
 						}
 				for (int i = 0; i < 14; ++i)
 				{
+#ifdef __linux__
+                    kos_WindowRedrawStatus(1);
+#endif
+
 					renderBox->RenderImg(GetImg(position, false), Point(0, 0), 24, 24);
-					objExplosion->Draw(Point(0, 0), 0, i);
+                    objExplosion->Draw(Point(0, 0), 0, i);
 					renderBox->Draw((position)* 24);
+#ifdef __linux__
+                    kos_WindowRedrawStatus(2);
+#endif
+
 					pause(2);
 				}
 				level[position.Y][position.X].d = FIELD_NONE;
@@ -615,6 +682,10 @@ void Laser(Point pos, Point vec, RGB color)
 		case FIELD_BRICK:
 			for (int i = 0; i < 6; ++i)
 			{
+#ifdef __linux__
+                kos_WindowRedrawStatus(1);
+#endif
+
 				level[position.Y][position.X].l += 1;
 				if (level[position.Y][position.X].l == 11)
 				{
@@ -623,6 +694,10 @@ void Laser(Point pos, Point vec, RGB color)
 					LaserGun = true;
 				}
 				DrawElevent(position, false);
+
+#ifdef __linux__
+                kos_WindowRedrawStatus(2);
+#endif
 				pause(5);
 			}
 			en = false;
@@ -659,14 +734,27 @@ void Laser(Point pos, Point vec, RGB color)
 					for (int x = 0; x < 16; x++)
 						if (level[y][x].l == 1)
 						{
+#ifdef __linux__
+                            kos_WindowRedrawStatus(1);
+#endif
 							DrawElevent(Point(x, y), true);
 							level[y][x].l = 0;
+#ifdef __linux__
+                            kos_WindowRedrawStatus(2);
+#endif
+
 						}
 				for (int i = 0; i < 14; ++i)
 				{
+#ifdef __linux__
+                    kos_WindowRedrawStatus(1);
+#endif
 					renderBox->RenderImg(GetImg(position, false), Point(0, 0), 24, 24);
 					objExplosion->Draw(Point(0, 0), 0, i);
 					renderBox->Draw((position)* 24);
+#ifdef __linux__
+                            kos_WindowRedrawStatus(2);
+#endif
 					pause(2);
 				}
 				level[player.position.Y][player.position.X].s = FIELD_CRATER;
@@ -818,8 +906,14 @@ void Laser(Point pos, Point vec, RGB color)
 		for (int x = 0; x < 16; x++)
 			if (level[y][x].l == 1)
 			{
+#ifdef __linux__
+                kos_WindowRedrawStatus(1);
+#endif
 				DrawElevent(Point(x, y), true);
 				level[y][x].l = 0;
+#ifdef __linux__
+                kos_WindowRedrawStatus(2);
+#endif
 			}
 	
 	if (LaserGun)
@@ -910,26 +1004,51 @@ void player_move(Point vector, float angle)
 
 		for (int i = 1; i < cnt - 1; ++i)
 		{
+#ifdef __linux__
+            kos_WindowRedrawStatus(1);
+#endif
 			player.angle += addAngle;
 			renderPlayer->RenderImg(GetImg(player.position, false), Point(0, 0), 24, 24);
 			objPlayer->Draw(Point(0, 0), player.angle);
 			renderPlayer->Draw(player.position * 24);
+
+#ifdef __linux__
+            kos_WindowRedrawStatus(2);
+#endif
 			pause(1);
 		}
 
 		player.vector = vector;
 		player.angle = angle;
 
+#ifdef __linux__
+        kos_WindowRedrawStatus(1);
+#endif
 		renderPlayer->RenderImg(GetImg(player.position, false), Point(0, 0), 24, 24);
 		objPlayer->Draw(Point(0, 0), player.angle);
 		renderPlayer->Draw(player.position * 24);
-	}
+#ifdef __linux__
+        kos_WindowRedrawStatus(2);
+#endif
+    }
 }
 
 void key_press(int key)
 {
 	//rtlDebugOutString(ftoa(key));
-	 
+
+#ifndef __linux__
+#define KEY_RIGHT 179
+#define KEY_LEFT  176
+#define KEY_UP    119
+#define KEY_DOWN  177
+#else
+#define KEY_RIGHT SDLK_RIGHT
+#define KEY_LEFT  SDLK_LEFT
+#define KEY_UP    SDLK_UP
+#define KEY_DOWN  SDLK_DOWN
+#endif
+
 	switch (gameMode)
 	{
 	case MODE_MENU:
@@ -958,25 +1077,25 @@ void key_press(int key)
 			}
 
 	// 179, 100   D Right
-		if ((key == 179 || key == 100) && (levelIndex + 1) < levelCount)
+        if ((key == KEY_RIGHT || key == 100) && (levelIndex + 1) < levelCount)
 		{
 			levelIndex++;
 			draw_window();
 		}
 	// 176, 97    A  Left
-		if ((key == 176 || key == 97) && levelIndex > 0)
+        if ((key == KEY_LEFT || key == 97) && levelIndex > 0)
 		{
 			levelIndex--;
 			draw_window();
 		}
 	// 119, 178: W Up
-		if ((key == 119 || key == 178) && (levelIndex - 6) >= 0)
+        if ((key == KEY_UP || key == 178) && (levelIndex - 6) >= 0)
 		{
 			levelIndex -= 6;
 			draw_window();
 		}
 	// 177, 115    S Down
-		if ((key == 177 || key == 115) && (levelIndex + 6) < levelCount)
+        if ((key == KEY_DOWN || key == 115) && (levelIndex + 6) < levelCount)
 		{
 			levelIndex += 6;
 			draw_window();
@@ -1009,22 +1128,22 @@ void key_press(int key)
 	case MODE_GAME:
 		switch (key)
 		{
-		case 119: // Up
+        case KEY_UP: // Up
 		case 178: // W
 			if (gameStatus == GAME_NONE)
 				player_move(Point(0, -1), 270);
 			break;
-		case 177: // Down
+        case KEY_DOWN: // Down
 		case 115: // S
 			if (gameStatus == GAME_NONE)
 				player_move(Point(0, 1), 90);
 			break;
-		case 176: // Left
+        case KEY_LEFT: // Left
 		case 97:  // A
 			if (gameStatus == GAME_NONE)
 				player_move(Point(-1, 0), 180);
 			break;
-		case 179: // Right
+        case KEY_RIGHT: // Right
 		case 100: // D
 			if (gameStatus == GAME_NONE)
 				player_move(Point(1, 0), 0);
@@ -1147,16 +1266,20 @@ void draw_level_number(Point position, int number, RGB color) // 0x252317
 
 void draw_window(void)
 {
+#ifndef __linux__
 	kos_WindowRedrawStatus(1);
-	kos_DefineAndDrawWindow(10, 40, 384 + 9, 384 + 25, 0x33, 0x444444, 0, 0, (Dword)header);
+    kos_DefineAndDrawWindow(10, 40, 384 + 9, 384 + 25, 0x33, 0x444444, 0, 0, (Dword)header);
+#else
+    kos_DefineAndDrawWindow(10, 40, 384, 384, 0x33, 0x444444, 0, 0, header);
+    kos_WindowRedrawStatus(1);
+#endif
+
 	Point level_pos = Point(0, 0);
 	switch (gameMode)
 	{
 	case MODE_MENU:
-		kos_PutImage((RGB*)img_menu, 384, 384, 0, 0);
-
-	//	kos_PutImage((RGB*)img_button, 150, 50, ToGame.rect.X, ToGame.rect.Y);
-		
+            kos_PutImage((RGB*)img_menu, 384, 384, 0, 0);
+            //	kos_PutImage((RGB*)img_button, 150, 50, ToGame.rect.X, ToGame.rect.Y);
 		
 		break;
 	case MODE_LEVELS:
@@ -1214,12 +1337,14 @@ void draw_window(void)
 			case GAME_NONE:
 				objPlayer1->Draw(player.position * 24, player.angle);
 				break;
+#ifndef __linux__
 			case GAME_VICTORY:
 				kos_WriteTextToWindow(30, 10, 0x80, 0xFFFFFF, "VICTORY", 0);
 				break;
 			case GAME_DEFEAT:
 				kos_WriteTextToWindow(30, 10, 0x80, 0xFFFFFF, "DEFEAT", 0);
 				break;
+#endif
 			}
 
 			for (int y = 0; y < 16; y++)
@@ -1232,16 +1357,27 @@ void draw_window(void)
 			renderLevels->RenderImg((RGB*)img_buttons[0], Point(77, 318), 229, 57);			 
 
 			renderLevels->Draw(Point(0, 0));
+
+#ifdef __linux__
+            // Else text will be overrided by textures
+            if (gameStatus == GAME_VICTORY) {
+                kos_WriteTextToWindow(30, 10, 0x80, 0xFFFFFF, "VICTORY", 0);
+            } else if (gameStatus == GAME_DEFEAT) {
+                kos_WriteTextToWindow(30, 10, 0x80, 0xFFFFFF, "DEFEAT", 0);
+            }
+#endif
 		break;
 	case MODE_GAME:
-		for (int y = 0; y < 4; y++)
-			for (int x = 0; x < 4; x++)
-				kos_PutImage((RGB*)img_gamebg, 96, 96, 96 * x, 96 * y);
+            for (int y = 0; y < 4; y++)
+                for (int x = 0; x < 4; x++) {
+                    kos_PutImage((RGB*)img_gamebg, 96, 96, 96 * x, 96 * y);
+            }
 		
 		for (int y = 0; y < 16; y++)
 			for (int x = 0; x < 16; x++)
-				if (level[y][x].s != FIELD_NONE)
-					kos_PutImage(GetImg(Point(x, y), true), 24, 24, 24 * x, 24 * y);	
+                if (level[y][x].s != FIELD_NONE) {
+                    kos_PutImage(GetImg(Point(x, y), true), 24, 24, 24 * x, 24 * y);
+                }
 
 		if(gameStatus != GAME_DEFEAT)
 		{
@@ -1249,8 +1385,10 @@ void draw_window(void)
 			objPlayer->Draw(Point(0, 0), player.angle);
 			renderPlayer->Draw(player.position * 24);
 		}
+
 	break;
 	}
+
 	kos_WindowRedrawStatus(2);
 }
 
@@ -1267,10 +1405,10 @@ void LevelsLoad()
 	cPtr[1] = 0;
 	strcpy(cPtr + 1, "data.lvl");
 	
-	CKosFile *file = new CKosFile(kosExePath);
+    CKosFile file(kosExePath);
 
 	Byte block[256];
-	while (file->Read(block, 256) == 256)
+    while (file.Read(block, 256) == 256)
 	{
 		levelCount++;
 	}
@@ -1279,10 +1417,10 @@ void LevelsLoad()
 
 	levels = new Level[levelCount];
 
-	file->Seek(0, SEEK_SET);
+    file.Seek(0, SEEK_SET);
 	for (int i = 0; i < levelCount; ++i)
 	{
-		file->Read(block, 256);
+        file.Read(block, 256);
 		int k = 0;
 
 		for (int y = 0; y < 16; y++)
@@ -1296,6 +1434,9 @@ void LevelsLoad()
 
 void openLevel(int index)
 {
+#ifdef __linux__
+    std::clog << "Open level: " << (index+1) << std::endl;
+#endif
 	levelIndex = index;
 	for (int y = 0; y < 16; y++)
 		for (int x = 0; x < 16; x++)
@@ -1342,67 +1483,67 @@ void kos_Main()
 		rtlDebugOutString("Invalid path to executable.");
 		return;
 	}
-	cPtr[1] = 0;
-	strcpy(cPtr + 1, "data01.pak");
+    cPtr[1] = 0;
 	
-	CKosFile *file = new CKosFile(kosExePath);
+    // Process data01.pak
+    {
+        strcpy(cPtr + 1, "data01.pak");
+        CKosFile file(kosExePath);
 
-	file->LoadTex((Byte*)img_box, 4, 24, 24);
-	for (int i = 0; i < 11; ++i)
-		file->LoadTex((Byte*)img_brick[i], 3, 24, 24);
-	file->LoadTex((Byte*)img_brick1, 3, 24, 24);
-	file->LoadTex((Byte*)img_finish, 3, 24, 24);
-	file->LoadTex((Byte*)img_ground, 3, 24, 24);
-	file->LoadTex((Byte*)img_laser, 4, 24, 24);	
-	file->LoadTex((Byte*)img_laser1, 4, 24, 24);
-	file->LoadTex((Byte*)img_laser2, 4, 24, 24);
+        file.LoadTex((Byte*)img_box, 4, 24, 24);
+        for (int i = 0; i < 11; ++i)
+            file.LoadTex((Byte*)img_brick[i], 3, 24, 24);
+        file.LoadTex((Byte*)img_brick1, 3, 24, 24);
+        file.LoadTex((Byte*)img_finish, 3, 24, 24);
+        file.LoadTex((Byte*)img_ground, 3, 24, 24);
+        file.LoadTex((Byte*)img_laser, 4, 24, 24);
+        file.LoadTex((Byte*)img_laser1, 4, 24, 24);
+        file.LoadTex((Byte*)img_laser2, 4, 24, 24);
 
-	for (int i = 0; i < 4; ++i)
-		file->LoadTex((Byte*)img_mirror[i], 3, 24, 24);
+        for (int i = 0; i < 4; ++i)
+            file.LoadTex((Byte*)img_mirror[i], 3, 24, 24);
 
-	//for (int i = 0; i < 4; ++i)
-	file->LoadTex((Byte*)img_mini_mirror, 4, 24, 96);
+        //for (int i = 0; i < 4; ++i)
+        file.LoadTex((Byte*)img_mini_mirror, 4, 24, 96);
 
-	file->LoadTex((Byte*)img_tank, 4, 24, 24);
-	file->LoadTex((Byte*)img_wall, 3, 24, 24);
-	file->LoadTex((Byte*)img_water, 3, 24, 24);
-	file->LoadTex((Byte*)img_waterbox, 3, 24, 24);
-	file->LoadTex((Byte*)img_menu, 3, 384, 384);
-	file->LoadTex((Byte*)img_explosion, 4, 24, 336);	
-	file->LoadTex((Byte*)img_gun, 4, 24, 24);	
-	file->LoadTex((Byte*)img_gamebg, 3, 96, 96);
+        file.LoadTex((Byte*)img_tank, 4, 24, 24);
+        file.LoadTex((Byte*)img_wall, 3, 24, 24);
+        file.LoadTex((Byte*)img_water, 3, 24, 24);
+        file.LoadTex((Byte*)img_waterbox, 3, 24, 24);
+        file.LoadTex((Byte*)img_menu, 3, 384, 384);
+        file.LoadTex((Byte*)img_explosion, 4, 24, 336);
+        file.LoadTex((Byte*)img_gun, 4, 24, 24);
+        file.LoadTex((Byte*)img_gamebg, 3, 96, 96);
+    }
 
-	
-	delete file;
+    // Process data01.pak
+    {
+        strcpy(cPtr + 1, "data02.pak");
 
-	strcpy(cPtr + 1, "data02.pak");
-	
-	file = new CKosFile(kosExePath);
+        CKosFile file(kosExePath);
 
-	file->LoadTex((Byte*)img_levels, 3, 384, 384);
+        file.LoadTex((Byte*)img_levels, 3, 384, 384);
 
-	for (int i = 0; i < 3; ++i)
-		file->LoadTex((Byte*)img_pandus[i], 3, 12, 1);
+        for (int i = 0; i < 3; ++i)
+            file.LoadTex((Byte*)img_pandus[i], 3, 12, 1);
 
-	file->LoadTex((Byte*)img_number_box, 4, 51, 50);
-	file->LoadTex((Byte*)img_numbers, 4, 14, 250);
-	
-	file->LoadTex((Byte*)img_button1, 4, 57, 57);
-	file->LoadTex((Byte*)img_button_arrow, 4, 25, 15);
+        file.LoadTex((Byte*)img_number_box, 4, 51, 50);
+        file.LoadTex((Byte*)img_numbers, 4, 14, 250);
 
-	file->LoadTex((Byte*)img_wall_h, 3, 24, 24);
-	file->LoadTex((Byte*)img_wall_v, 3, 24, 24);
-	file->LoadTex((Byte*)img_wall_x, 3, 24, 24);
-	
-	file->LoadTex((Byte*)img_crater, 3, 24, 24);
+        file.LoadTex((Byte*)img_button1, 4, 57, 57);
+        file.LoadTex((Byte*)img_button_arrow, 4, 25, 15);
 
-	file->LoadTex((Byte*)img_black, 4, 24, 24);
+        file.LoadTex((Byte*)img_wall_h, 3, 24, 24);
+        file.LoadTex((Byte*)img_wall_v, 3, 24, 24);
+        file.LoadTex((Byte*)img_wall_x, 3, 24, 24);
 
-	for (int i = 0; i < 3; ++i)
-		file->LoadTex((Byte*)img_buttons[i], 3, 229, 57);	
+        file.LoadTex((Byte*)img_crater, 3, 24, 24);
 
+        file.LoadTex((Byte*)img_black, 4, 24, 24);
 
-	delete file;
+        for (int i = 0; i < 3; ++i)
+            file.LoadTex((Byte*)img_buttons[i], 3, 229, 57);
+    }
 
 	renderPlayer = new CKosRender(24, 24);
 	objPlayer = new CKosImage(renderPlayer, (RGBA*)img_tank, 24, 24);
@@ -1443,29 +1584,97 @@ void kos_Main()
 
 	openLevel(0);
 
-	kos_SetMaskForEvents(0x27);
-	for (;;)
-	{
-		switch (kos_WaitForEvent())
-		{
-		case 1:
-			draw_window();
-			break;
-		case 2:
-			Byte keyCode;
-			kos_GetKey(keyCode);
-			key_press(keyCode);
-			break;
-		case 3:
-			kos_ExitApp();
-			break;
-		case 6:
-			Dword buttons;
-			int mX, mY;
-			kos_GetMouseState(buttons, mX, mY);
-			if (buttons & 1)
-				MousePress(MOUSE_LEFT, Point(mX, mY));
-			break;
-		}
-	}
+    event_loop();
 }
+
+#ifndef __linux__
+void event_loop() {
+    kos_SetMaskForEvents(0x27);
+    for (;;)
+    {
+        switch (kos_WaitForEvent())
+        {
+        case 1:
+            draw_window();
+            break;
+        case 2:
+            Byte keyCode;
+            kos_GetKey(keyCode);
+            key_press(keyCode);
+            break;
+        case 3:
+            kos_ExitApp();
+            break;
+        case 6:
+            Dword buttons;
+            int mX, mY;
+            kos_GetMouseState(buttons, mX, mY);
+            if (buttons & 1)
+                MousePress(MOUSE_LEFT, Point(mX, mY));
+            break;
+        }
+    }
+}
+
+
+#else // Linux
+
+void event_loop()
+{
+    SDL_Event event{};
+    bool      quit = false;
+    while (!quit) {
+
+        while (SDL_PollEvent(&event) != 0) {
+            switch (event.type) {
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+                case SDL_KEYDOWN:
+                {
+                    const uint8_t* kbstate = SDL_GetKeyboardState(nullptr);
+                    for (size_t idx = 0; idx < SDL_NUM_SCANCODES; ++idx) {
+                        if (kbstate[idx]) {
+                            key_press(SDL_GetKeyFromScancode(static_cast<SDL_Scancode>(idx)));
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+                case SDL_MOUSEBUTTONDOWN:
+                    if (event.button.button == SDL_BUTTON_LEFT)
+                        MousePress(MOUSE_LEFT, Point(event.button.x, event.button.y));
+                    break;
+                case SDL_WINDOWEVENT:
+                    switch (event.window.event) {
+                        case SDL_WINDOWEVENT_EXPOSED:
+                            draw_window();
+                            break;
+                    }
+
+                    break;
+            }
+        }
+
+        SDL_Delay(20);
+    }
+}
+
+int main(int argc, char **argv)
+{
+    auto result = readlink("/proc/self/exe", kosExePath, 1024);
+    if (result < 0) {
+        std::clog << "Can't get module path. Exit\n";
+        kos_ExitApp();
+    }
+
+    std::clog << "Module path: " << kosExePath << std::endl;
+
+    initGraph();
+
+    kos_Main();
+
+    deinitGraph();
+}
+#endif

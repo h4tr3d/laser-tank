@@ -1,7 +1,14 @@
+#ifndef __linux__
 #include "smalllibc/kosSyst.h"
-#include "render.h"
 #include "smalllibc/func.h"
+#else
+#include <math.h>
+#include "linux/kosSyst.h"
+#include "linux/func.h"
+#endif
 #include "image.h"
+#include "render.h"
+
 //#include "mymath.h"
 
 CKosImage::CKosImage(CKosRender *render, RGBA *buffer, int width, int height)
@@ -124,9 +131,9 @@ void CKosImage::Draw(Point position, float angle)
 					else
 						if (this->mode = DRAW_ALPHA_ADD)
 						{
-							newPixel.r = di(min(255, (double)(pixel.r * (1 - alpha) + addPixel.r * alpha)));
-							newPixel.g = di(min(255, (double)(pixel.g * (1 - alpha) + addPixel.g * alpha)));
-							newPixel.b = di(min(255, (double)(pixel.b * (1 - alpha) + addPixel.b * alpha)));
+                            newPixel.r = di(min(255.0, (double)(pixel.r * (1 - alpha) + addPixel.r * alpha)));
+                            newPixel.g = di(min(255.0, (double)(pixel.g * (1 - alpha) + addPixel.g * alpha)));
+                            newPixel.b = di(min(255.0, (double)(pixel.b * (1 - alpha) + addPixel.b * alpha)));
 						}
 						else
 						{
