@@ -20,7 +20,7 @@ private:
 	int frameHeight;
 public:
     CKosImage(class CKosRender *render, RGBA *buffer, int width, int height);
-	~CKosImage(void);
+    ~CKosImage();
 
 	void Draw(Point position, float angle, RGB color);
 	void Draw(Point position, float angle);
@@ -28,6 +28,17 @@ public:
 	void Draw(Point position, float angle, int frame, RGB color);
 	void SetMode(int mode);
 	void SetFrameSize(int width, int height);
+
+#if __cplusplus >= 201103L
+    CKosImage(const CKosImage&) = delete;
+    CKosImage& operator=(const CKosImage&) = delete;
+    CKosImage(CKosImage&&) = default;
+    CKosImage& operator=(CKosImage&&) = default;
+#else
+    CKosImage(const CKosImage&);
+    CKosImage& operator=(const CKosImage&);
+#endif
+
 protected:
 	CKosRender *render;
 	RGBA *buffer;

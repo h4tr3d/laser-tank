@@ -24,7 +24,7 @@ CKosImage::CKosImage(CKosRender *render, RGBA *buffer, int width, int height)
 	this->frameHeight = 0;
 }
 
-CKosImage::~CKosImage(void)
+CKosImage::~CKosImage()
 {
 
 }
