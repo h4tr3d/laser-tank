@@ -14,6 +14,11 @@ On Ubuntu Trusty (14.04) or Mint 17.x:
 sudo apt-get install libsdl2-dev libsdl2-ttf-dev cmake g++
 ```
 
+On OpenSUSE: libSDL2-devel and libSDL2_ttf-devel:
+```
+sudo yast2 -i libSDL2-devel libSDL2_ttf-devel cmake gcc-c++
+```
+
 Create directory for build:
 ```
 mkdir build
@@ -24,7 +29,7 @@ make -j8
 
 Copy resources near executable (or make links):
 ```
-cp ../data.lvl ../data01.pak ../data01.pak ../DejaVuSans.ttf .
+cp ../data.lvl ../data01.pak ../data02.pak ../DejaVuSans.ttf .
 ```
 
 Run game:
