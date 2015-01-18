@@ -1,4 +1,4 @@
-#ifndef __linux__
+#ifdef __KOLIBRI_OS__
 #include "smalllibc/kosSyst.h"
 #include "smalllibc/func.h"
 #else

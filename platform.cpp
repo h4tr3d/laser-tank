@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <iostream>
 
+#include "platform.h"
+
 #ifdef _WIN32
     // define something for Windows (32-bit and 64-bit)
-	#include <windows.h>
 	int getexepath(char *exepath)
 	{
 		int size = GetModuleFileName( NULL, exepath, 1024);
@@ -14,7 +15,6 @@
     //define something for Windows (64-bit only)
    #endif
 #elif __APPLE__
-	#include <mach-o/dyld.h>
 	int getexepath(char *exepath)
 	{
 		char path[1024];
@@ -41,6 +41,6 @@
 		return count > 0 ? count : -1;
 	}
 #else
-    #define __KOLIBRI_OS_
+    // kolibri os 
 #endif
 

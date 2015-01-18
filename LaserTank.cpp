@@ -1,4 +1,6 @@
-#ifndef __linux__
+#include "platform.h"
+
+#ifdef __KOLIBRI_OS__
 #include "smalllibc/kosSyst.h"
 #include "smalllibc/kosFile.h"
 #include "smalllibc/sprintf.h"
@@ -18,6 +20,7 @@
 #endif
 #include "render.h"
 #include "image.h"
+
 
 #define MODE_MENU		0
 #define MODE_LEVELS		1
@@ -67,7 +70,7 @@ struct Level
 void pause(int time)
 {
 	kos_Pause(time);
-#ifndef __linux__
+#ifdef __KOLIBRI_OS__
     // TODO: why this code present here???
 	Byte keyCode;
 	for (int i = 0; i < 10; ++i)
@@ -402,19 +405,19 @@ void ExistGun(Point position)
 	ExistGun1(position, Point(0, -1), FIELD_GUN_1);
 }
 
-void DrawElevent(Point position, bool din)
+void DrawElement(Point position, bool din)
 {
 	kos_PutImage(GetImg(position, din), 24, 24, 24 * position.X, 24 * position.Y);
 }
 
 void MoveElement(Point a, Point b, int element)
 {
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
     kos_WindowRedrawStatus(1);
 #endif
 
 	level[a.Y][a.X].d = FIELD_NONE;
-	DrawElevent(a, false);
+	DrawElement(a, false);
 	if (level[b.Y][b.X].s == FIELD_WATER)
 	{
 		if (element == FIELD_BOX)
@@ -422,9 +425,9 @@ void MoveElement(Point a, Point b, int element)
 	}
 	else
 		level[b.Y][b.X].d = element;
-	DrawElevent(b, true);
+	DrawElement(b, true);
 
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
     kos_WindowRedrawStatus(2);
 #endif
 
@@ -436,8 +439,8 @@ void animation(Point vector, float angle, int obj)
 	{
 		kos_WindowRedrawStatus(1);
 
-		DrawElevent(player.position, false);
-		DrawElevent(player.position + vector, false);
+		DrawElement(player.position, false);
+		DrawElement(player.position + vector, false);
 
 		renderPlayer->RenderImg(GetImg(player.position, false), vector * -i, 24, 24);
 		renderPlayer->RenderImg(GetImg(player.position + vector, false), vector * -i + vector * 24, 24, 24);
@@ -487,12 +490,12 @@ void animation(Point vector, float angle, int obj)
 	if (level[player.position.Y + vector.Y][player.position.X + vector.X].d == obj)
 		MoveElement(player.position + vector, player.position + vector * 2, GetField(player.position + vector, true));
 
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
     kos_WindowRedrawStatus(1);
 #endif
 
-	DrawElevent(player.position, true);
-	DrawElevent(player.position + vector, true);
+	DrawElement(player.position, true);
+	DrawElement(player.position + vector, true);
 	player.position = player.position + vector;
 	//kos_PutImage(GetImg(player.position + vector), 24, 24, 24 * player.position.X, 24 * player.position.Y);
 	renderPlayer->RenderImg(GetImg(player.position, false), Point(0, 0), 24, 24);
@@ -500,7 +503,7 @@ void animation(Point vector, float angle, int obj)
 	renderPlayer->Draw(player.position * 24);
 	ExistGun(player.position);
 
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
     kos_WindowRedrawStatus(2);
 #endif
 
@@ -508,7 +511,7 @@ void animation(Point vector, float angle, int obj)
 
 void DrawLaser(Point position, int frame, RGB color)
 {   
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
     kos_WindowRedrawStatus(1);
 #endif
 
@@ -533,7 +536,7 @@ void DrawLaser(Point position, int frame, RGB color)
 	renderBox->Draw(position * 24);
 	level[position.Y][position.X].l = 1;
 
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
     kos_WindowRedrawStatus(2);
 #endif
 }
@@ -551,7 +554,7 @@ bool LaserMoveElement(Point position, Point vector, int code, RGB color)
 		case FIELD_BOX_WATER:
 			for (int i = 2; i < 23; ++i)
 			{
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                 kos_WindowRedrawStatus(1);
 #endif
 
@@ -562,7 +565,7 @@ bool LaserMoveElement(Point position, Point vector, int code, RGB color)
 					objLaser->Draw((vector.Y > 0) ? Point(0, i - 24) : Point(0, 24 - i), 90, color);
 				renderBox->Draw(position * 24);
 
-				DrawElevent(position + vector, false);
+				DrawElement(position + vector, false);
 
 				renderBox->RenderImg(GetImg(position, false), vector * -i, 24, 24);
 				renderBox->RenderImg(GetImg(position + vector, false), vector * -i + vector * 24, 24, 24);
@@ -598,7 +601,7 @@ bool LaserMoveElement(Point position, Point vector, int code, RGB color)
 				}
 				renderBox->Draw((position)* 24 + vector * i);
 
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                 kos_WindowRedrawStatus(2);
 #endif
 				kos_Pause(1);
@@ -637,25 +640,25 @@ void Laser(Point pos, Point vec, RGB color)
 					for (int x = 0; x < 16; x++)
 						if (level[y][x].l == 1)
 						{
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                             kos_WindowRedrawStatus(1);
 #endif
-							DrawElevent(Point(x, y), true);
+							DrawElement(Point(x, y), true);
 							level[y][x].l = 0;
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                             kos_WindowRedrawStatus(2);
 #endif
 						}
 				for (int i = 0; i < 14; ++i)
 				{
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                     kos_WindowRedrawStatus(1);
 #endif
 
 					renderBox->RenderImg(GetImg(position, false), Point(0, 0), 24, 24);
                     objExplosion->Draw(Point(0, 0), 0, i);
 					renderBox->Draw((position)* 24);
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                     kos_WindowRedrawStatus(2);
 #endif
 
@@ -682,7 +685,7 @@ void Laser(Point pos, Point vec, RGB color)
 		case FIELD_BRICK:
 			for (int i = 0; i < 6; ++i)
 			{
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                 kos_WindowRedrawStatus(1);
 #endif
 
@@ -693,9 +696,9 @@ void Laser(Point pos, Point vec, RGB color)
 					level[position.Y][position.X].l = 0;
 					LaserGun = true;
 				}
-				DrawElevent(position, false);
+				DrawElement(position, false);
 
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                 kos_WindowRedrawStatus(2);
 #endif
 				pause(5);
@@ -734,25 +737,25 @@ void Laser(Point pos, Point vec, RGB color)
 					for (int x = 0; x < 16; x++)
 						if (level[y][x].l == 1)
 						{
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                             kos_WindowRedrawStatus(1);
 #endif
-							DrawElevent(Point(x, y), true);
+							DrawElement(Point(x, y), true);
 							level[y][x].l = 0;
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                             kos_WindowRedrawStatus(2);
 #endif
 
 						}
 				for (int i = 0; i < 14; ++i)
 				{
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                     kos_WindowRedrawStatus(1);
 #endif
 					renderBox->RenderImg(GetImg(position, false), Point(0, 0), 24, 24);
 					objExplosion->Draw(Point(0, 0), 0, i);
 					renderBox->Draw((position)* 24);
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                             kos_WindowRedrawStatus(2);
 #endif
 					pause(2);
@@ -906,12 +909,12 @@ void Laser(Point pos, Point vec, RGB color)
 		for (int x = 0; x < 16; x++)
 			if (level[y][x].l == 1)
 			{
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                 kos_WindowRedrawStatus(1);
 #endif
-				DrawElevent(Point(x, y), true);
+				DrawElement(Point(x, y), true);
 				level[y][x].l = 0;
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
                 kos_WindowRedrawStatus(2);
 #endif
 			}
@@ -1004,7 +1007,7 @@ void player_move(Point vector, float angle)
 
 		for (int i = 1; i < cnt - 1; ++i)
 		{
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
             kos_WindowRedrawStatus(1);
 #endif
 			player.angle += addAngle;
@@ -1012,7 +1015,7 @@ void player_move(Point vector, float angle)
 			objPlayer->Draw(Point(0, 0), player.angle);
 			renderPlayer->Draw(player.position * 24);
 
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
             kos_WindowRedrawStatus(2);
 #endif
 			pause(1);
@@ -1021,13 +1024,13 @@ void player_move(Point vector, float angle)
 		player.vector = vector;
 		player.angle = angle;
 
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
         kos_WindowRedrawStatus(1);
 #endif
 		renderPlayer->RenderImg(GetImg(player.position, false), Point(0, 0), 24, 24);
 		objPlayer->Draw(Point(0, 0), player.angle);
 		renderPlayer->Draw(player.position * 24);
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
         kos_WindowRedrawStatus(2);
 #endif
     }
@@ -1037,7 +1040,7 @@ void key_press(int key)
 {
 	//rtlDebugOutString(ftoa(key));
 
-#ifndef __linux__
+#ifdef __KOLIBRI_OS__
 #define KEY_RIGHT 179
 #define KEY_LEFT  176
 #define KEY_UP    119
@@ -1267,7 +1270,7 @@ void draw_level_number(Point position, int number, RGB color) // 0x252317
 
 void draw_window(void)
 {
-#ifndef __linux__
+#ifdef __KOLIBRI_OS__
 	kos_WindowRedrawStatus(1);
     kos_DefineAndDrawWindow(10, 40, 384 + 9, 384 + 25, 0x33, 0x444444, 0, 0, (Dword)header);
 #else
@@ -1338,7 +1341,7 @@ void draw_window(void)
 			case GAME_NONE:
 				objPlayer1->Draw(player.position * 24, player.angle);
 				break;
-#ifndef __linux__
+#ifdef __KOLIBRI_OS__
 			case GAME_VICTORY:
 				kos_WriteTextToWindow(30, 10, 0x80, 0xFFFFFF, "VICTORY", 0);
 				break;
@@ -1359,7 +1362,7 @@ void draw_window(void)
 
 			renderLevels->Draw(Point(0, 0));
 
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
             // Else text will be overrided by textures
             if (gameStatus == GAME_VICTORY) {
                 kos_WriteTextToWindow(30, 10, 0x80, 0xFFFFFF, "VICTORY", 0);
@@ -1435,7 +1438,7 @@ void LevelsLoad()
 
 void openLevel(int index)
 {
-#ifdef __linux__
+#ifndef __KOLIBRI_OS__
     std::clog << "Open level: " << (index+1) << std::endl;
 #endif
 	levelIndex = index;
@@ -1588,7 +1591,7 @@ void kos_Main()
     event_loop();
 }
 
-#ifndef __linux__
+#ifdef __KOLIBRI_OS__
 void event_loop() {
     kos_SetMaskForEvents(0x27);
     for (;;)
@@ -1662,9 +1665,11 @@ void event_loop()
     }
 }
 
+
 int main()
 {
-    auto result = readlink("/proc/self/exe", kosExePath, 1024);
+	char *exepath = &kosExePath[0];
+    auto result = getexepath(exepath);
     if (result < 0) {
         std::clog << "Can't get module path. Exit\n";
         kos_ExitApp();

@@ -26,12 +26,26 @@ find_package(SDL2_ttf REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${SDL2_TTF_INCLUDE_DIR})
 
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	add_executable(LaserTank
+	    linux/func.cpp
+	    linux/kosFile.cpp
+	    linux/kosSyst.cpp
+	    LaserTank.cpp
+		platform.cpp
+	    image.cpp
+	    render.cpp)
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")	
+
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 add_executable(LaserTank
-    linux/func.cpp
-    linux/kosFile.cpp
-    linux/kosSyst.cpp
+    macosx/func.cpp
+    macosx/kosFile.cpp
+    macosx/kosSyst.cpp
     LaserTank.cpp
+	platform.cpp
     image.cpp
     render.cpp)
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 target_link_libraries(LaserTank ${SDL2_LIBRARY} ${SDL2_TTF_LIBRARY} m)
