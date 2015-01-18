@@ -1,2 +1,4 @@
 *.o
-LaserTank
+*~
+.DS_Store
+build/*
