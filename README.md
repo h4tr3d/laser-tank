@@ -14,10 +14,16 @@ On Ubuntu Trusty (14.04) or Mint 17.x:
 sudo apt-get install libsdl2-dev libsdl2-ttf-dev cmake g++
 ```
 
-On OpenSUSE: libSDL2-devel and libSDL2_ttf-devel:
+On OpenSUSE:
 ```
 sudo yast2 -i libSDL2-devel libSDL2_ttf-devel cmake gcc-c++
 ```
+
+On MacOS X with brew:
+```
+brew install cmake sdl2 sdl2_image sdl2_ttf
+```
+
 
 Create directory for build:
 ```
