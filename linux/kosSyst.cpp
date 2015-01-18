@@ -191,7 +191,7 @@ void kos_Pause( Dword value )
 // ������� 7 ���������� �����������
 void kos_PutImage(const RGB * imagePtr, Word sizeX, Word sizeY, Word x, Word y )
 {
-    SDL_Texture *texture = SDL_CreateTexture(s_ren, SDL_PIXELFORMAT_RGB24, SDL_TEXTUREACCESS_STATIC, sizeX, sizeY);
+    SDL_Texture *texture = SDL_CreateTexture(s_ren, SDL_PIXELFORMAT_BGR24, SDL_TEXTUREACCESS_STATIC, sizeX, sizeY);
     SDL_UpdateTexture(texture, nullptr, imagePtr, sizeX * sizeof(RGB));
 
     SDL_Rect rect;
