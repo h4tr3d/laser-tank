@@ -16,7 +16,7 @@ sudo apt-get install libsdl2-dev libsdl2-ttf-dev cmake g++
 
 On OpenSUSE: libSDL2-devel and libSDL2_ttf-devel:
 ```
-sudo yast2 -i libSDL2-devel libSDL2_ttf-devel cmake gcc-c++
+sudo zypper in libSDL2-devel libSDL2_ttf-devel cmake gcc-c++
 ```
 
 Create directory for build:
