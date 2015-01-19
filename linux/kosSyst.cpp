@@ -58,13 +58,13 @@ unsigned int num2hex( unsigned int num )
 }
 
 
-// ������� -1 ���������� ��������
+// Function -1 - terminate process
 void kos_ExitApp()
 {
     exit(0);
 }
 
-// ������� 0
+// Function 0 - create and redraw window
 void kos_DefineAndDrawWindow(
 	Word x, Word y,
 	Word sizeX, Word sizeY,
@@ -104,7 +104,7 @@ void kos_DefineAndDrawWindow(
 }
 
 
-// ������� 1 ��������� �����
+// Function 1 - Draw pixel in window
 void kos_PutPixel( Dword x, Dword y, Dword colour )
 {
     RGBA c(colour);
@@ -112,7 +112,7 @@ void kos_PutPixel( Dword x, Dword y, Dword colour )
     SDL_RenderDrawPoint(s_ren, x, y);
 }
 
-// ������� 2 �������� ��� ������� �������
+// Function 2 - get keycode of the pressed button
 bool kos_GetKey( Byte &keyCode )
 {
     static_cast<void>(keyCode);
@@ -121,13 +121,13 @@ bool kos_GetKey( Byte &keyCode )
 }
 
 
-// ������� 3 �������� �����
+// Function 3 - get current time
 Dword kos_GetSystemClock()
 {
     return 0;
 }
 
-// ������� 4
+// Function 4 - write text to window
 void kos_WriteTextToWindow(
 	Word x,
 	Word y,
@@ -181,14 +181,14 @@ void kos_WriteTextToWindow(
 }
 
 
-// ������� 5 �����, � ����� ����� �������
+// Function 5 - pause thread execution. value in 1/100 sec units
 void kos_Pause( Dword value )
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(value * 10));
 }
 
 
-// ������� 7 ���������� �����������
+// Function 7 - draw RGB image to window
 void kos_PutImage(const RGB * imagePtr, Word sizeX, Word sizeY, Word x, Word y )
 {
     SDL_Texture *texture = SDL_CreateTexture(s_ren, SDL_PIXELFORMAT_BGR24, SDL_TEXTUREACCESS_STATIC, sizeX, sizeY);
@@ -207,7 +207,7 @@ void kos_PutImage(const RGB * imagePtr, Word sizeX, Word sizeY, Word x, Word y )
 
 
 
-// ������� 8 ���������� ������
+// Function 8 - define button
 void kos_DefineButton( Word x, Word y, Word sizeX, Word sizeY, Dword buttonID, Dword colour )
 {
     static_cast<void>(x);
@@ -220,7 +220,7 @@ void kos_DefineButton( Word x, Word y, Word sizeX, Word sizeY, Dword buttonID, D
 }
 
 
-// ������� 9 - ���������� � ��������
+// Function 9 - process info
 Dword kos_ProcessInfo( sProcessInfo *targetPtr, Dword processID )
 {
     static_cast<void>(targetPtr);
@@ -229,7 +229,7 @@ Dword kos_ProcessInfo( sProcessInfo *targetPtr, Dword processID )
 }
 
 
-// ������� 10
+// Function 10 - wait for system event
 Dword kos_WaitForEvent()
 {
     // TODO: learn this function
@@ -238,7 +238,7 @@ Dword kos_WaitForEvent()
 }
 
 
-// ������� 11
+// Function 11 - check pending events
 Dword kos_CheckForEvent()
 {
     assert(0);
@@ -246,7 +246,7 @@ Dword kos_CheckForEvent()
 }
 
 
-// ������� 12
+// Function 12 - set window redraw status: 1 - begin redraw, 2 - complete redraw
 void kos_WindowRedrawStatus( Dword status )
 {
     if (status == 2) {
@@ -255,7 +255,7 @@ void kos_WindowRedrawStatus( Dword status )
 }
 
 
-// ������� 13 ���������� ������
+// Function 13 - draw bar
 void kos_DrawBar( Word x, Word y, Word sizeX, Word sizeY, Dword colour )
 {
     static_cast<void>(x);
@@ -267,7 +267,7 @@ void kos_DrawBar( Word x, Word y, Word sizeX, Word sizeY, Dword colour )
 }
 
 
-// ������� 17
+// Function 17
 bool kos_GetButtonID( Dword &buttonID )
 {
     static_cast<void>(buttonID);
@@ -275,7 +275,7 @@ bool kos_GetButtonID( Dword &buttonID )
 }
 
 
-// ������� 23
+// Function 23
 Dword kos_WaitForEventTimeout( Dword timeOut )
 {
     static_cast<void>(timeOut);
@@ -283,7 +283,7 @@ Dword kos_WaitForEventTimeout( Dword timeOut )
 }
 
 
-// ��������� ���������� � ��������� "����" ������� 37
+// Function 37 - get mouse status
 void kos_GetMouseState( Dword & buttons, int & cursorX, int & cursorY )
 {
     static_cast<void>(buttons);
@@ -293,7 +293,7 @@ void kos_GetMouseState( Dword & buttons, int & cursorX, int & cursorY )
 }
 
 
-// ������� 40 ���������� ����� �������
+// Function 40 - set event mask. Only "masked" event will be reported by kos_WaitForEevent()
 void kos_SetMaskForEvents( Dword mask )
 {
     static_cast<void>(mask);
@@ -301,7 +301,7 @@ void kos_SetMaskForEvents( Dword mask )
 }
 
 
-// ������� 47 ������� � ���� ���������� �����
+// Function 47 - draw number in window
 void kos_DisplayNumberToWindow(
    Dword value,
    Dword digitsNum,
@@ -323,7 +323,7 @@ void kos_DisplayNumberToWindow(
 }
 
 
-// ������� 70 ������ � �������� �������
+// Function 70 - file system access
 Dword kos_FileSystemAccess( kosFileInfo *fileInfo )
 {
     static_cast<void>(fileInfo);
@@ -331,14 +331,14 @@ Dword kos_FileSystemAccess( kosFileInfo *fileInfo )
 }
 
 
-// ������� 63 ����� ������� � ���� �������
+// Function 63 - output character to debug window
 void kos_DebugOutChar( char ccc )
 {
     std::clog << ccc ;
 }
 
 
-// ������� 66 ����� ��������� ������ �� ����������
+// Function 66 - set keyboard data retrieve mode
 void kos_SetKeyboardDataMode( Dword mode )
 {
     static_cast<void>(mode);
@@ -346,14 +346,14 @@ void kos_SetKeyboardDataMode( Dword mode )
 }
 
 
-// ����� ������ � ���� �������
+// Output string to debug window
 void rtlDebugOutString( const char *str )
 {
     std::clog << str << std::endl;
 }
 
 
-// ������� 64 ��������� ���������� ������, ���������� ��� ���������
+// Function 64 - change application memory size. Look like similar to linux sbrk() call.
 bool kos_ApplicationMemoryResize( Dword targetSize )
 {
     static_cast<void>(targetSize);
@@ -362,7 +362,7 @@ bool kos_ApplicationMemoryResize( Dword targetSize )
 }
 
 
-// ������� 67 �������� ��������� ����, �������� == -1 �� ��������
+// Function 67 - change window parameters. If param setted to (Dword)-1 param unchanged.
 void kos_ChangeWindow( Dword x, Dword y, Dword sizeX, Dword sizeY )
 {
     static_cast<void>(x);
