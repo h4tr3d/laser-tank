@@ -9,9 +9,6 @@
 
 #include <algorithm>
 
-#define min(a,b) std::min(a,b)
-#define max(a,b) std::max(a,b)
-
 #define ERROR -1
 #define ERROR_END -2
 

@@ -1,15 +1,15 @@
-#ifndef __linux__
-#include "smalllibc/kosSyst.h"
-#include "smalllibc/func.h"
-#else
-#include <math.h>
-#include "linux/kosSyst.h"
-#include "linux/func.h"
-#endif
+#include "platform/kosSyst.h"
+#include "platform/func.h"
+
 #include "image.h"
 #include "render.h"
 
 //#include "mymath.h"
+
+#ifndef __kos__
+using std::min;
+using std::max;
+#endif
 
 CKosImage::CKosImage(CKosRender *render, RGBA *buffer, int width, int height)
 {

@@ -1,8 +1,4 @@
-#ifndef __linux__
-#include "smalllibc/kosSyst.h"
-#else
-#include "linux/kosSyst.h"
-#endif
+#include "platform/kosSyst.h"
 
 #define DRAW_NONE			0
 #define DRAW_ALPHA			1

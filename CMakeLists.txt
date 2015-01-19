@@ -19,19 +19,17 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     endif()
 endif()
 
-# Look up SDL2 and add the include directory to our include path
-find_package(SDL2     REQUIRED)
-find_package(SDL2_ttf REQUIRED)
 
-include_directories(${SDL2_INCLUDE_DIR})
-include_directories(${SDL2_TTF_INCLUDE_DIR})
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR
+    ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR
+    ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    include("${LaserTank_SOURCE_DIR}/platform/sdl2/platform.cmake")
+endif()
 
 add_executable(LaserTank
-    linux/func.cpp
-    linux/kosFile.cpp
-    linux/kosSyst.cpp
+    ${PLATFORM_SRC}
     LaserTank.cpp
     image.cpp
     render.cpp)
 
-target_link_libraries(LaserTank ${SDL2_LIBRARY} ${SDL2_TTF_LIBRARY} m)
+target_link_libraries(LaserTank ${PLATFORM_LIBS})

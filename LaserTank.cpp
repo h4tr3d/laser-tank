@@ -1,21 +1,19 @@
-#ifndef __linux__
-#include "smalllibc/kosSyst.h"
-#include "smalllibc/kosFile.h"
-#include "smalllibc/sprintf.h"
-#include "smalllibc/func.h"
-#else
+#include "platform/kosSyst.h"
+#include "platform/kosFile.h"
+#include "platform/func.h"
+
+#ifndef __kos__
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-
 #include <iostream>
-
 #include <SDL.h>
 
-#include "linux/kosSyst.h"
-#include "linux/kosFile.h"
-#include "linux/func.h"
+using std::min;
+using std::max;
+
 #endif
+
 #include "render.h"
 #include "image.h"
 
@@ -67,7 +65,7 @@ struct Level
 void pause(int time)
 {
 	kos_Pause(time);
-#ifndef __linux__
+#ifdef __kos__
     // TODO: why this code present here???
 	Byte keyCode;
 	for (int i = 0; i < 10; ++i)
@@ -409,7 +407,7 @@ void DrawElevent(Point position, bool din)
 
 void MoveElement(Point a, Point b, int element)
 {
-#ifdef __linux__
+#ifndef __kos__
     kos_WindowRedrawStatus(1);
 #endif
 
@@ -424,7 +422,7 @@ void MoveElement(Point a, Point b, int element)
 		level[b.Y][b.X].d = element;
 	DrawElevent(b, true);
 
-#ifdef __linux__
+#ifndef __kos__
     kos_WindowRedrawStatus(2);
 #endif
 
@@ -487,7 +485,7 @@ void animation(Point vector, float angle, int obj)
 	if (level[player.position.Y + vector.Y][player.position.X + vector.X].d == obj)
 		MoveElement(player.position + vector, player.position + vector * 2, GetField(player.position + vector, true));
 
-#ifdef __linux__
+#ifndef __kos__
     kos_WindowRedrawStatus(1);
 #endif
 
@@ -500,7 +498,7 @@ void animation(Point vector, float angle, int obj)
 	renderPlayer->Draw(player.position * 24);
 	ExistGun(player.position);
 
-#ifdef __linux__
+#ifndef __kos__
     kos_WindowRedrawStatus(2);
 #endif
 
@@ -508,7 +506,7 @@ void animation(Point vector, float angle, int obj)
 
 void DrawLaser(Point position, int frame, RGB color)
 {   
-#ifdef __linux__
+#ifndef __kos__
     kos_WindowRedrawStatus(1);
 #endif
 
@@ -533,7 +531,7 @@ void DrawLaser(Point position, int frame, RGB color)
 	renderBox->Draw(position * 24);
 	level[position.Y][position.X].l = 1;
 
-#ifdef __linux__
+#ifndef __kos__
     kos_WindowRedrawStatus(2);
 #endif
 }
@@ -551,7 +549,7 @@ bool LaserMoveElement(Point position, Point vector, int code, RGB color)
 		case FIELD_BOX_WATER:
 			for (int i = 2; i < 23; ++i)
 			{
-#ifdef __linux__
+#ifndef __kos__
                 kos_WindowRedrawStatus(1);
 #endif
 
@@ -598,7 +596,7 @@ bool LaserMoveElement(Point position, Point vector, int code, RGB color)
 				}
 				renderBox->Draw((position)* 24 + vector * i);
 
-#ifdef __linux__
+#ifndef __kos__
                 kos_WindowRedrawStatus(2);
 #endif
 				kos_Pause(1);
@@ -637,25 +635,25 @@ void Laser(Point pos, Point vec, RGB color)
 					for (int x = 0; x < 16; x++)
 						if (level[y][x].l == 1)
 						{
-#ifdef __linux__
+#ifndef __kos__
                             kos_WindowRedrawStatus(1);
 #endif
 							DrawElevent(Point(x, y), true);
 							level[y][x].l = 0;
-#ifdef __linux__
+#ifndef __kos__
                             kos_WindowRedrawStatus(2);
 #endif
 						}
 				for (int i = 0; i < 14; ++i)
 				{
-#ifdef __linux__
+#ifndef __kos__
                     kos_WindowRedrawStatus(1);
 #endif
 
 					renderBox->RenderImg(GetImg(position, false), Point(0, 0), 24, 24);
                     objExplosion->Draw(Point(0, 0), 0, i);
 					renderBox->Draw((position)* 24);
-#ifdef __linux__
+#ifndef __kos__
                     kos_WindowRedrawStatus(2);
 #endif
 
@@ -682,7 +680,7 @@ void Laser(Point pos, Point vec, RGB color)
 		case FIELD_BRICK:
 			for (int i = 0; i < 6; ++i)
 			{
-#ifdef __linux__
+#ifndef __kos__
                 kos_WindowRedrawStatus(1);
 #endif
 
@@ -695,7 +693,7 @@ void Laser(Point pos, Point vec, RGB color)
 				}
 				DrawElevent(position, false);
 
-#ifdef __linux__
+#ifndef __kos__
                 kos_WindowRedrawStatus(2);
 #endif
 				pause(5);
@@ -734,25 +732,25 @@ void Laser(Point pos, Point vec, RGB color)
 					for (int x = 0; x < 16; x++)
 						if (level[y][x].l == 1)
 						{
-#ifdef __linux__
+#ifndef __kos__
                             kos_WindowRedrawStatus(1);
 #endif
 							DrawElevent(Point(x, y), true);
 							level[y][x].l = 0;
-#ifdef __linux__
+#ifndef __kos__
                             kos_WindowRedrawStatus(2);
 #endif
 
 						}
 				for (int i = 0; i < 14; ++i)
 				{
-#ifdef __linux__
+#ifndef __kos__
                     kos_WindowRedrawStatus(1);
 #endif
 					renderBox->RenderImg(GetImg(position, false), Point(0, 0), 24, 24);
 					objExplosion->Draw(Point(0, 0), 0, i);
 					renderBox->Draw((position)* 24);
-#ifdef __linux__
+#ifndef __kos__
                             kos_WindowRedrawStatus(2);
 #endif
 					pause(2);
@@ -906,12 +904,12 @@ void Laser(Point pos, Point vec, RGB color)
 		for (int x = 0; x < 16; x++)
 			if (level[y][x].l == 1)
 			{
-#ifdef __linux__
+#ifndef __kos__
                 kos_WindowRedrawStatus(1);
 #endif
 				DrawElevent(Point(x, y), true);
 				level[y][x].l = 0;
-#ifdef __linux__
+#ifndef __kos__
                 kos_WindowRedrawStatus(2);
 #endif
 			}
@@ -1004,7 +1002,7 @@ void player_move(Point vector, float angle)
 
 		for (int i = 1; i < cnt - 1; ++i)
 		{
-#ifdef __linux__
+#ifndef __kos__
             kos_WindowRedrawStatus(1);
 #endif
 			player.angle += addAngle;
@@ -1012,7 +1010,7 @@ void player_move(Point vector, float angle)
 			objPlayer->Draw(Point(0, 0), player.angle);
 			renderPlayer->Draw(player.position * 24);
 
-#ifdef __linux__
+#ifndef __kos__
             kos_WindowRedrawStatus(2);
 #endif
 			pause(1);
@@ -1021,13 +1019,13 @@ void player_move(Point vector, float angle)
 		player.vector = vector;
 		player.angle = angle;
 
-#ifdef __linux__
+#ifndef __kos__
         kos_WindowRedrawStatus(1);
 #endif
 		renderPlayer->RenderImg(GetImg(player.position, false), Point(0, 0), 24, 24);
 		objPlayer->Draw(Point(0, 0), player.angle);
 		renderPlayer->Draw(player.position * 24);
-#ifdef __linux__
+#ifndef __kos__
         kos_WindowRedrawStatus(2);
 #endif
     }
@@ -1359,7 +1357,7 @@ void draw_window(void)
 
 			renderLevels->Draw(Point(0, 0));
 
-#ifdef __linux__
+#ifndef __kos__
             // Else text will be overrided by textures
             if (gameStatus == GAME_VICTORY) {
                 kos_WriteTextToWindow(30, 10, 0x80, 0xFFFFFF, "VICTORY", 0);
@@ -1435,7 +1433,7 @@ void LevelsLoad()
 
 void openLevel(int index)
 {
-#ifdef __linux__
+#ifndef __kos__
     std::clog << "Open level: " << (index+1) << std::endl;
 #endif
 	levelIndex = index;
@@ -1588,7 +1586,7 @@ void kos_Main()
     event_loop();
 }
 
-#ifndef __linux__
+#ifdef __kos__
 void event_loop() {
     kos_SetMaskForEvents(0x27);
     for (;;)
@@ -1618,7 +1616,7 @@ void event_loop() {
 }
 
 
-#else // Linux
+#else // SDL event loop
 
 void event_loop()
 {
@@ -1660,22 +1658,5 @@ void event_loop()
 
         SDL_Delay(20);
     }
-}
-
-int main()
-{
-    auto result = readlink("/proc/self/exe", kosExePath, 1024);
-    if (result < 0) {
-        std::clog << "Can't get module path. Exit\n";
-        kos_ExitApp();
-    }
-
-    std::clog << "Module path: " << kosExePath << std::endl;
-
-    initGraph();
-
-    kos_Main();
-
-    deinitGraph();
 }
 #endif
