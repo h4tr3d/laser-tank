@@ -1265,7 +1265,7 @@ void draw_level_number(Point position, int number, RGB color) // 0x252317
 
 void draw_window(void)
 {
-#ifndef __linux__
+#ifdef __kos__
 	kos_WindowRedrawStatus(1);
     kos_DefineAndDrawWindow(10, 40, 384 + 9, 384 + 25, 0x33, 0x444444, 0, 0, (Dword)header);
 #else
