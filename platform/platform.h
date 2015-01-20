@@ -16,6 +16,8 @@
 #elif defined(__APPLE__)
     #define __sdl2__
     #include "TargetConditionals.h"
+    #include <sys/errno.h>
+
     #if TARGET_IPHONE_SIMULATOR
         // iOS Simulator
     #elif TARGET_OS_IPHONE
