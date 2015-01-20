@@ -1,4 +1,6 @@
-#include "platform/platform.h"
+#include <stdint.h>
+#include <string.h>
+#include <mach-o/dyld.h>
 
 int getexepath(char *exepath)
 {
