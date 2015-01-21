@@ -1336,7 +1336,7 @@ void draw_window(void)
 			case GAME_NONE:
 				objPlayer1->Draw(player.position * 24, player.angle);
 				break;
-#ifdef __sdl2__
+#ifdef __kos__
 			case GAME_VICTORY:
 				kos_WriteTextToWindow(30, 10, 0x80, 0xFFFFFF, "VICTORY", 0);
 				break;
