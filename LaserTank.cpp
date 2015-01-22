@@ -1035,7 +1035,7 @@ void key_press(int key)
 {
 	//rtlDebugOutString(ftoa(key));
 
-#ifndef __linux__
+#ifdef __kos__
 #define KEY_RIGHT 179
 #define KEY_LEFT  176
 #define KEY_UP    119
@@ -1336,7 +1336,7 @@ void draw_window(void)
 			case GAME_NONE:
 				objPlayer1->Draw(player.position * 24, player.angle);
 				break;
-#ifndef __linux__
+#ifdef __kos__
 			case GAME_VICTORY:
 				kos_WriteTextToWindow(30, 10, 0x80, 0xFFFFFF, "VICTORY", 0);
 				break;

@@ -1,6 +1,7 @@
 #include <exception>
 #include <stdexcept>
 #include <string>
+#include <cerrno>
 #include <cassert>
 
 #include <string.h>
