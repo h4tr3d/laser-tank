@@ -400,7 +400,7 @@ void ExistGun(Point position)
 	ExistGun1(position, Point(0, -1), FIELD_GUN_1);
 }
 
-void DrawElevent(Point position, bool din)
+void DrawElement(Point position, bool din)
 {
 	kos_PutImage(GetImg(position, din), 24, 24, 24 * position.X, 24 * position.Y);
 }
@@ -412,7 +412,7 @@ void MoveElement(Point a, Point b, int element)
 #endif
 
 	level[a.Y][a.X].d = FIELD_NONE;
-	DrawElevent(a, false);
+	DrawElement(a, false);
 	if (level[b.Y][b.X].s == FIELD_WATER)
 	{
 		if (element == FIELD_BOX)
@@ -420,7 +420,7 @@ void MoveElement(Point a, Point b, int element)
 	}
 	else
 		level[b.Y][b.X].d = element;
-	DrawElevent(b, true);
+	DrawElement(b, true);
 
 #ifndef __kos__
     kos_WindowRedrawStatus(2);
@@ -434,8 +434,8 @@ void animation(Point vector, float angle, int obj)
 	{
 		kos_WindowRedrawStatus(1);
 
-		DrawElevent(player.position, false);
-		DrawElevent(player.position + vector, false);
+		DrawElement(player.position, false);
+		DrawElement(player.position + vector, false);
 
 		renderPlayer->RenderImg(GetImg(player.position, false), vector * -i, 24, 24);
 		renderPlayer->RenderImg(GetImg(player.position + vector, false), vector * -i + vector * 24, 24, 24);
@@ -489,8 +489,8 @@ void animation(Point vector, float angle, int obj)
     kos_WindowRedrawStatus(1);
 #endif
 
-	DrawElevent(player.position, true);
-	DrawElevent(player.position + vector, true);
+	DrawElement(player.position, true);
+	DrawElement(player.position + vector, true);
 	player.position = player.position + vector;
 	//kos_PutImage(GetImg(player.position + vector), 24, 24, 24 * player.position.X, 24 * player.position.Y);
 	renderPlayer->RenderImg(GetImg(player.position, false), Point(0, 0), 24, 24);
@@ -560,7 +560,7 @@ bool LaserMoveElement(Point position, Point vector, int code, RGB color)
 					objLaser->Draw((vector.Y > 0) ? Point(0, i - 24) : Point(0, 24 - i), 90, color);
 				renderBox->Draw(position * 24);
 
-				DrawElevent(position + vector, false);
+				DrawElement(position + vector, false);
 
 				renderBox->RenderImg(GetImg(position, false), vector * -i, 24, 24);
 				renderBox->RenderImg(GetImg(position + vector, false), vector * -i + vector * 24, 24, 24);
@@ -638,7 +638,7 @@ void Laser(Point pos, Point vec, RGB color)
 #ifndef __kos__
                             kos_WindowRedrawStatus(1);
 #endif
-							DrawElevent(Point(x, y), true);
+							DrawElement(Point(x, y), true);
 							level[y][x].l = 0;
 #ifndef __kos__
                             kos_WindowRedrawStatus(2);
@@ -691,7 +691,7 @@ void Laser(Point pos, Point vec, RGB color)
 					level[position.Y][position.X].l = 0;
 					LaserGun = true;
 				}
-				DrawElevent(position, false);
+				DrawElement(position, false);
 
 #ifndef __kos__
                 kos_WindowRedrawStatus(2);
@@ -735,12 +735,11 @@ void Laser(Point pos, Point vec, RGB color)
 #ifndef __kos__
                             kos_WindowRedrawStatus(1);
 #endif
-							DrawElevent(Point(x, y), true);
+							DrawElement(Point(x, y), true);
 							level[y][x].l = 0;
 #ifndef __kos__
                             kos_WindowRedrawStatus(2);
 #endif
-
 						}
 				for (int i = 0; i < 14; ++i)
 				{
@@ -751,7 +750,7 @@ void Laser(Point pos, Point vec, RGB color)
 					objExplosion->Draw(Point(0, 0), 0, i);
 					renderBox->Draw((position)* 24);
 #ifndef __kos__
-                            kos_WindowRedrawStatus(2);
+					kos_WindowRedrawStatus(2);
 #endif
 					pause(2);
 				}
@@ -907,7 +906,7 @@ void Laser(Point pos, Point vec, RGB color)
 #ifndef __kos__
                 kos_WindowRedrawStatus(1);
 #endif
-				DrawElevent(Point(x, y), true);
+				DrawElement(Point(x, y), true);
 				level[y][x].l = 0;
 #ifndef __kos__
                 kos_WindowRedrawStatus(2);
