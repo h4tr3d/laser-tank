@@ -740,7 +740,6 @@ void Laser(Point pos, Point vec, RGB color)
 #ifndef __kos__
                             kos_WindowRedrawStatus(2);
 #endif
-
 						}
 				for (int i = 0; i < 14; ++i)
 				{
@@ -751,7 +750,7 @@ void Laser(Point pos, Point vec, RGB color)
 					objExplosion->Draw(Point(0, 0), 0, i);
 					renderBox->Draw((position)* 24);
 #ifndef __kos__
-                            kos_WindowRedrawStatus(2);
+					kos_WindowRedrawStatus(2);
 #endif
 					pause(2);
 				}
